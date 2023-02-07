@@ -1,24 +1,46 @@
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { Paragraph, TextInput } from 'react-native-paper'
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Button, Paragraph, TextInput } from 'react-native-paper'
 import { useNavigation} from "@react-navigation/native";
+import api from '../../axios/api';
+import axios from 'axios';
 
-// import logo from '.src/imgs/logo.jpeg';
+
 
 export function Login() {
-  const [email, setEmail] = useState('')
-  const [senha, setSenha] = useState('')
+  const [email, setEmail] = useState("")
+  const [senha, setSenha] = useState("")
+  const [error, setError] = useState("")
+  
+  const [dados, setDados] = useState([])
 
   const {navigate} = useNavigation();
 
+  const handleLogin = async() => {
+    try {
+      const response = await api.post('/login', 
+        {email: email, senha: senha}
+      )
+      setError('vode pode logar')
+    }catch(error){
+      setError(error.message)
+    }
+  }
+
+ 
+  
   return (
     <SafeAreaView style={style.container}>
       <Image style={{width:350, height:250}} source={require('../../imgs/logo.png')}/>
       <Text style={style.textOnibus}>Onibus App</Text>
       <View style={style.ViewInputs}>
         <TextInput style={style.Inputs} type='outlined' label='email' value={email}  onChangeText={text => setEmail(text)}/>
-        <TextInput style={style.Inputs} type='outlined' label='senha' value={senha}  onChangeText={text => setSenha(text)}/>
+        <TextInput style={style.Inputs} secureTextEntry={true} type='outlined' label='senha' value={senha}  onChangeText={text => setSenha(text)}/>
+        {error && <Text>{error}</Text>}
       </View>
+      <Button marginTop={15} mode="outlined" width={300} onPress={()=>handleLogin()}>
+            Entrar
+      </Button>
       <View style={{alignItems:"center", marginTop:20}}>
         <Text>ou</Text>
         <View style={{flexDirection:"row" }}>
@@ -27,7 +49,7 @@ export function Login() {
                 <Text style={{fontWeight:'bold'}}>SingUp</Text>
             </TouchableOpacity>
         </View>
-      </View>
+      </View> 
     </SafeAreaView>
   )
 }
@@ -50,7 +72,7 @@ const style = StyleSheet.create({
     Inputs:{
         width:300,
         height:60,
-        marginTop:20
+        marginTop:20,
     },
     ViewInputs:{
         
