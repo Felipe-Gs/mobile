@@ -18,13 +18,18 @@ export function Home() {
     const {navigate} = useNavigation();
 
     const handleCadastro = async()=>{
+      if(email === '' || senha === '' || nome === '' ){
+        setError('Insira os dados corretamente')
+        return
+      }
       try {
         const response = await api.post("/inserir", 
          {email, senha, nome}
         );
-        setError('estudante cadastrado!')
+        alert('Usuario cadastrado com sucesso')
+        navigate('Listar')
       } catch (error) {
-        setError('usuario nao foi cadastrado')
+        setError('Usuario nao foi cadastrado')
       }
     }
 

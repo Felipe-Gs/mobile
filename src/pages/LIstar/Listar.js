@@ -6,42 +6,43 @@ import api from '../../axios/api';
 
 import {ActivityIndicator} from 'react-native-paper';
 
-export function Login() {
-  const [email, setEmail] = useState("")
-  const [senha, setSenha] = useState("")
-  const [error, setError] = useState("")
+export function Listar() {
   
   const [dados, setDados] = useState([])
+  const [nome, setNome] = useState("")
 
   const {navigate} = useNavigation();
 
   const handleLogin = async() => {
+    
     try {
-      if(email === '' || senha === '') {
-        setError('Insira os dados corretamente')
-        return
-      }
-      const response = await api.post('/login', 
-        {email: email, senha: senha}
-      )
-      response.data.id
-      navigate('Listar')
-    }catch(error){
-      setError(error.message)
+        const response = await api.get('/listar')
+        const dados = response.data.nome
+        setNome(dados)
+        console.log(dados)
+    } catch (error) {
+        
     }
   }
 
+  useEffect(()=>{
+    const listarDados = async()=>{
+        try {
+            const response = await api.get('/listar')
+            const dados = response.data 
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    listarDados()
+  },[])
   
   return (
     <SafeAreaView style={style.container}>
+    <Text>{nome}</Text>
       <Image style={{width:350, height:250}} source={require('../../imgs/logo.png')}/>
       <Text style={style.textOnibus}>Onibus App</Text>
-      <View style={style.ViewInputs}>
-        <TextInput style={style.Inputs} type='outlined' label='email' value={email}  onChangeText={text => setEmail(text)}/>
-        <TextInput style={style.Inputs} secureTextEntry={true} type='outlined' label='senha' value={senha}  onChangeText={text => setSenha(text)}/>
-        {error && <Text style={{color:"red", alignSelf:"center", marginTop:5}}>{error}</Text>}
-        
-      </View>
+      
       <Button marginTop={15} mode="outlined" width={300} onPress={()=>handleLogin()}>
             Entrar
       </Button>
