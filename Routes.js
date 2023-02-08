@@ -11,7 +11,7 @@ import { Listar } from './src/pages/LIstar/Listar';
 
 export function AppRoutes(){
   return(
-      <Navigator screenOptions={{ headerShown: false }}>
+      <Navigator screenOptions={{ headerShown: false }} initialRouteName='Login'>
           <Screen
               name='Login'
               component={Login}
