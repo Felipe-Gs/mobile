@@ -1,16 +1,26 @@
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, Alert } from 'react-native'
+import { View, 
+  Text,
+   StyleSheet, 
+   SafeAreaView, 
+   Image, TouchableOpacity, Alert, FlatList, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Button, Paragraph, TextInput } from 'react-native-paper'
+import { Button, Paragraph, TextInput,  Avatar, IconButton } from 'react-native-paper'
 import { useNavigation} from "@react-navigation/native";
 import api from '../../axios/api';
+import { Feather } from '@expo/vector-icons';
+import { useAuth } from '../../hooks/useAuth';
 
+import { Searchbar } from 'react-native-paper';
 import {ActivityIndicator} from 'react-native-paper';
 
-export function Listar() {
-  
-  const [dados, setDados] = useState([])
-  const [nome, setNome] = useState("")
+import CardInfo from '../../components/CardInfo';
 
+
+
+export function Listar() {
+  const { estudante } = useAuth();
+
+  const [dados, setDados] = useState()
   const {navigate} = useNavigation();
 
   const handleLogin = async() => {
@@ -29,32 +39,45 @@ export function Listar() {
     const listarDados = async()=>{
         try {
             const response = await api.get('/listar')
-            const dados = response.data 
+            const dados = response.data
+            setDados(dados) 
         } catch (error) {
             console.log(error)
         }
     }
-    listarDados()
-  },[])
+    listarDados();
+
+  },[]);
   
   return (
     <SafeAreaView style={style.container}>
-    <Text>{nome}</Text>
-      <Image style={{width:350, height:250}} source={require('../../imgs/logo.png')}/>
-      <Text style={style.textOnibus}>Onibus App</Text>
+      {estudante && <Text style={{fontSize:20, alignSelf:'flex-start', marginBottom:10}}>Bem vindo(a) {estudante.nome}</Text>}
       
-      <Button marginTop={15} mode="outlined" width={300} onPress={()=>handleLogin()}>
-            Entrar
-      </Button>
-      <View style={{alignItems:"center", marginTop:20}}>
-        <Text>ou</Text>
-        <View style={{flexDirection:"row" }}>
-            <Text style={{marginRight:10}}>Não tem conta?</Text>
-            <TouchableOpacity onPress={()=> navigate('Home')}>
-                <Text style={{fontWeight:'bold'}}>SingUp</Text>
-            </TouchableOpacity>
-        </View>
-      </View> 
+      <Searchbar 
+        placeholder="Buscar..."
+        // onChangeText={onChangeSearch}
+        // value={searchQuery}
+      />
+      <ScrollView style={{width:'100%', height:'100%'}}>
+        {dados? 
+        dados.map((item, index) => {
+          return (
+            <View style={{width:'100%', height:100}} key={index}>
+              <CardInfo nome={item.nome} email={item.email} />
+            </View>
+          );
+        }): <ActivityIndicator/>}
+      </ScrollView>
+      {/* <FlatList
+        data={dados}
+        renderItem={({ item, index }) => (
+          <View style={{width:'100%', height:100,}} key={index}>
+            <CardInfo nome={item.nome} email={item.email} />
+          </View>
+        )}
+      /> */}
+    
+      
     </SafeAreaView>
   )
 }
@@ -65,7 +88,7 @@ const style = StyleSheet.create({
         flex:1,
         padding:20, 
         alignItems:"center",
-        justifyContent:'center',
+        marginTop:50
     },
     textOnibus:{
         fontSize:25,
