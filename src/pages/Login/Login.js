@@ -5,33 +5,26 @@ import { useNavigation} from "@react-navigation/native";
 import api from '../../axios/api';
 
 import {ActivityIndicator} from 'react-native-paper';
+import { useAuth } from '../../hooks/useAuth';
 
 export function Login() {
-  const [email, setEmail] = useState("")
-  const [senha, setSenha] = useState("")
-  const [error, setError] = useState("")
+  
+
   
   const [dados, setDados] = useState([])
 
   const {navigate} = useNavigation();
 
-  const handleLogin = async() => {
-    try {
-      if(email === '' || senha === '') {
-        setError('Insira os dados corretamente')
-        return
-      }
-      const response = await api.post('/login', 
-        {email: email, senha: senha}
-      )
-      response.data.id
-      navigate('Listar')
-    }catch(error){
-      setError(error.message)
-    }
-  }
-
+  const {handleLogin, error,setError,  email, senha, setEmail, setSenha, estudante} = useAuth();
   
+  useEffect(()=>{
+    
+      setEmail('')
+      setSenha('')
+      setError('')
+      navigate('Listar')
+    
+  },[estudante])
   return (
     <SafeAreaView style={style.container}>
       <Image style={{width:350, height:250}} source={require('../../imgs/logo.png')}/>

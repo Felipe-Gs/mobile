@@ -20,7 +20,7 @@ export function AuthContextProvider({children}){
           )
           setEstudante(response.data.estudante)
         //   console.log(response.data.estudante)
-          console.log(estudante.id)
+          console.log(estudante)
           return response.data.email
         }catch(error){
           setError(error.message)

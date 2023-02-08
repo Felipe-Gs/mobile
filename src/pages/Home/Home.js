@@ -27,7 +27,7 @@ export function Home() {
          {email, senha, nome}
         );
         alert('Usuario cadastrado com sucesso')
-        navigate('Listar')
+        navigate('Login')
       } catch (error) {
         setError('Usuario nao foi cadastrado')
       }
