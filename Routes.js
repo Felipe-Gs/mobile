@@ -6,6 +6,7 @@ import { Login } from './src/pages/Login/Login';
 import { Home } from './src/pages/Home/Home';
 
 import { Listar } from './src/pages/LIstar/Listar';
+import EstudanteVolta from './src/pages/EstudanteVolta/EstudanteVolta';
 
 
 
@@ -23,6 +24,10 @@ export function AppRoutes(){
           <Screen
               name='Listar'
               component={Listar}
+          />
+          <Screen
+              name='EstudanteVolta'
+              component={EstudanteVolta}
           />
       </Navigator>
   )
