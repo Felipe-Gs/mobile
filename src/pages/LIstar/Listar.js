@@ -1,5 +1,5 @@
 import { View, 
-  Text,
+   Text,
    StyleSheet, 
    SafeAreaView, 
    Image, TouchableOpacity, Alert, FlatList, ScrollView } from 'react-native'
@@ -10,16 +10,18 @@ import api from '../../axios/api';
 import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 
-import { Searchbar } from 'react-native-paper';
+import { Searchbar, Dialog, Portal, } from 'react-native-paper';
 import {ActivityIndicator} from 'react-native-paper';
 
 import CardInfo from '../../components/CardInfo';
+import AlertDelete from '../../components/AlertDelete';
 
 
 
 export function Listar() {
   const { estudante } = useAuth();
 
+  const [searchQuery, setSearchQuery] = useState('');
   const [dados, setDados] = useState()
   const {navigate} = useNavigation();
 
@@ -48,36 +50,32 @@ export function Listar() {
     listarDados();
 
   },[]);
+  const [visible, setVisible] = useState(false)
+  
+
   
   return (
     <SafeAreaView style={style.container}>
+      
       {estudante && <Text style={{fontSize:20, alignSelf:'flex-start', marginBottom:10}}>Bem vindo(a) {estudante.nome}</Text>}
       
       <Searchbar 
         placeholder="Buscar..."
-        // onChangeText={onChangeSearch}
-        // value={searchQuery}
+        onChangeText={query => setSearchQuery(query)}
+        value={searchQuery}
       />
       <ScrollView style={{width:'100%', height:'100%'}}>
         {dados? 
-        dados.map((item, index) => {
-          return (
-            <View style={{width:'100%', height:100}} key={index}>
-              <CardInfo nome={item.nome} email={item.email} />
-            </View>
-          );
-        }): <ActivityIndicator/>}
+          dados.filter(dado => dado.nome.toLowerCase().includes(searchQuery.toLowerCase()))
+          .map((item, index) => {
+            return (
+              <View style={{width:'100%', height:100}} key={index}>
+                <CardInfo nome={item.nome} email={item.email} id={item.id} />
+              </View>
+            );
+          })
+        : <ActivityIndicator/>}
       </ScrollView>
-      {/* <FlatList
-        data={dados}
-        renderItem={({ item, index }) => (
-          <View style={{width:'100%', height:100,}} key={index}>
-            <CardInfo nome={item.nome} email={item.email} />
-          </View>
-        )}
-      /> */}
-    
-      
     </SafeAreaView>
   )
 }
