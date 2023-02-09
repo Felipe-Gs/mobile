@@ -19,10 +19,8 @@ export function Login() {
   
   useEffect(()=>{
     
-      setEmail('')
-      setSenha('')
-      setError('')
-      navigate('Listar')
+      {estudante && navigate('Listar')}
+      
     
   },[estudante])
   return (
