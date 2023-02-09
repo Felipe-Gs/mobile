@@ -2,19 +2,18 @@ import { View,
    Text,
    StyleSheet, 
    SafeAreaView, 
-   Image, TouchableOpacity, Alert, FlatList, ScrollView } from 'react-native'
+   ScrollView, 
+   TouchableOpacity} from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Button, Paragraph, TextInput,  Avatar, IconButton } from 'react-native-paper'
 import { useNavigation} from "@react-navigation/native";
 import api from '../../axios/api';
-import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 
-import { Searchbar, Dialog, Portal, } from 'react-native-paper';
+import { Searchbar } from 'react-native-paper';
 import {ActivityIndicator} from 'react-native-paper';
 
 import CardInfo from '../../components/CardInfo';
-import AlertDelete from '../../components/AlertDelete';
+import { Entypo } from '@expo/vector-icons'; 
 
 
 
@@ -22,7 +21,7 @@ export function Listar() {
   const { estudante } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [dados, setDados] = useState()
+  const [dados, setDados] = useState([])
   const {navigate} = useNavigation();
 
   const handleLogin = async() => {
@@ -49,7 +48,7 @@ export function Listar() {
     }
     listarDados();
 
-  },[]);
+  },[dados]);
   const [visible, setVisible] = useState(false)
   
 
@@ -64,6 +63,7 @@ export function Listar() {
         onChangeText={query => setSearchQuery(query)}
         value={searchQuery}
       />
+      <Text style={{fontSize:20}}>Todos Estudantes:</Text>
       <ScrollView style={{width:'100%', height:'100%'}}>
         {dados? 
           dados.filter(dado => dado.nome.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -76,6 +76,9 @@ export function Listar() {
           })
         : <ActivityIndicator/>}
       </ScrollView>
+      <TouchableOpacity style={style.arrowGo} onPress={()=>navigate('EstudanteVolta')}>
+        <Entypo name="chevron-right" size={30} color="black" />
+      </TouchableOpacity>
     </SafeAreaView>
   )
 }
@@ -102,5 +105,11 @@ const style = StyleSheet.create({
     },
     ViewInputs:{
         
-    }
+    },
+    arrowGo:{
+      position: 'absolute',
+      right: 50,
+      bottom:30,
+      zIndex:1
+  }
 })

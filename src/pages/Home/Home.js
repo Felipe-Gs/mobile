@@ -9,13 +9,14 @@ import api from '../../axios/api';
 
 
 export function Home() {
+    const {navigate} = useNavigation();
+
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
     const [nome, setNome] = useState("")
     const [error, setError] = useState("")
     
 
-    const {navigate} = useNavigation();
 
     const handleCadastro = async()=>{
       if(email === '' || senha === '' || nome === '' ){

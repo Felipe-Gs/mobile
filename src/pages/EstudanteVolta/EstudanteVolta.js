@@ -3,7 +3,8 @@ import { View,
     StyleSheet, 
     SafeAreaView, 
     ScrollView, 
-    TouchableOpacity} from 'react-native'
+    TouchableOpacity,
+    FlatList} from 'react-native'
  import React, { useEffect, useState } from 'react'
  import { useNavigation} from "@react-navigation/native";
  import api from '../../axios/api';
@@ -12,23 +13,41 @@ import { View,
  import { Searchbar } from 'react-native-paper';
  import {ActivityIndicator} from 'react-native-paper';
  
- import CardInfo from '../../components/CardInfo';
- import AlertDelete from '../../components/AlertDelete';
- import CheckBoxToggle from '../../components/CheckBoxToggle';
  import { Entypo } from '@expo/vector-icons'; 
+ import { Ionicons } from '@expo/vector-icons';
  
+ import CardInfo from '../../components/CardInfo';
+import CheckBoxToggle from '../../components/CheckBoxToggle';
  
  
  export default function EstudanteVolta() {
    const { estudante } = useAuth();
+   const {navigate} = useNavigation();
  
    const [searchQuery, setSearchQuery] = useState('');
    const [dados, setDados] = useState()
-   const {navigate} = useNavigation();
- 
 
-   const [visible, setVisible] = useState(false)
    
+   useEffect(()=>{
+       const listarEstudantesVoltam = async()=>{
+           try {
+               const response = await api.get('/estudanteVolta')
+               const dados = response.data
+               setDados(dados) 
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        listarEstudantesVoltam();
+    },[dados])
+    
+    const filterData = (query) => {
+        if (!dados) return;
+        const filteredData = dados.filter((item) =>
+          item.nome.toLowerCase().includes(query.toLowerCase())
+        );
+        setDados(filteredData);
+    };
  
    
    return (
@@ -38,25 +57,29 @@ import { View,
        
        <Searchbar 
          placeholder="Buscar..."
-         onChangeText={query => setSearchQuery(query)}
+         onChangeText={text => {
+            setSearchQuery(text);
+            filterData(text);
+         }}
          value={searchQuery}
        />
-       <Text style={{marginTop:20}}>Estudantes que voltam hoje:</Text>
-       <ScrollView style={{width:'100%', height:'100%'}}>
-         {dados? 
-           dados.filter(dado => dado.nome.toLowerCase().includes(searchQuery.toLowerCase()))
-           .map((item, index) => {
-             return (
-               <View style={{width:'100%', height:100}} key={index}>
-                 <CardInfo nome={item.nome} email={item.email} id={item.id} />
-               </View>
-             );
-           })
-         : ''}
-         {/* <ActivityIndicator/> */}
-       </ScrollView>
+       <CheckBoxToggle/>
+       <Text style={{marginTop:20, fontSize:22}}>Estudantes que voltam hoje:</Text>
+       {dados? (
+           <FlatList
+                showsVerticalScrollIndicator={false}
+                style={{width:'100%', height:'100%'}}
+                data={dados}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View style={{width:'100%', height:100}}>
+                        <CardInfo nome={item.nome} email={item.email}  />
+                    </View>
+                )}
+            />
+       ): <ActivityIndicator/>}
        <TouchableOpacity style={style.arrowGo} onPress={()=>navigate('Listar')}>
-         <Entypo name="chevron-right" size={30} color="black" />
+            <Ionicons name="chevron-back-outline" size={28} color="black" />
        </TouchableOpacity>
      </SafeAreaView>
    )
