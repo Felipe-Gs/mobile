@@ -12,7 +12,7 @@ import EstudanteVolta from './src/pages/EstudanteVolta/EstudanteVolta';
 
 export function AppRoutes(){
   return(
-      <Navigator screenOptions={{ headerShown: false }} initialRouteName={'Login'}  >
+      <Navigator screenOptions={{ headerShown: false }} initialRouteName='Login'  >
           <Screen
               name='Login'
               component={Login}
