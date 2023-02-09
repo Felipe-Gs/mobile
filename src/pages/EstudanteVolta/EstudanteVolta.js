@@ -26,28 +26,31 @@ import CheckBoxToggle from '../../components/CheckBoxToggle';
  
    const [searchQuery, setSearchQuery] = useState('');
    const [dados, setDados] = useState()
-
+   const [isLoading, setIsLoading] = useState(false);
+   const [dadosIniciais, setDadosIniciais] = useState();
    
    useEffect(()=>{
        const listarEstudantesVoltam = async()=>{
+       
            try {
                const response = await api.get('/estudanteVolta')
                const dados = response.data
                setDados(dados) 
+               setDadosIniciais(dados);
             } catch (error) {
                 console.log(error)
             }
-        }
+        };
         listarEstudantesVoltam();
-    },[dados])
+    },[])
     
     const filterData = (query) => {
-        if (!dados) return;
-        const filteredData = dados.filter((item) =>
+      if (!dadosIniciais) return;
+        const filteredData = dadosIniciais.filter((item) =>
           item.nome.toLowerCase().includes(query.toLowerCase())
         );
         setDados(filteredData);
-    };
+      };
  
    
    return (
@@ -57,15 +60,32 @@ import CheckBoxToggle from '../../components/CheckBoxToggle';
        
        <Searchbar 
          placeholder="Buscar..."
-         onChangeText={text => {
+         onChangeText={(text) => {
             setSearchQuery(text);
             filterData(text);
          }}
          value={searchQuery}
        />
+
        <CheckBoxToggle/>
+
        <Text style={{marginTop:20, fontSize:22}}>Estudantes que voltam hoje:</Text>
-       {dados? (
+       {dados ? (
+         <FlatList
+          showsVerticalScrollIndicator={false}
+          style={{ width: '100%', height: '100%' }}
+          data={dados}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={{ width: '100%', height: 100 }}>
+                <CardInfo nome={item.nome} email={item.email} />
+              </View>
+            )}
+          />
+          ) : (
+        <ActivityIndicator />
+      )}
+       {/* {dados? (
            <FlatList
                 showsVerticalScrollIndicator={false}
                 style={{width:'100%', height:'100%'}}
@@ -77,7 +97,7 @@ import CheckBoxToggle from '../../components/CheckBoxToggle';
                     </View>
                 )}
             />
-       ): <ActivityIndicator/>}
+       ): <ActivityIndicator/>} */}
        <TouchableOpacity style={style.arrowGo} onPress={()=>navigate('Listar')}>
             <Ionicons name="chevron-back-outline" size={28} color="black" />
        </TouchableOpacity>
