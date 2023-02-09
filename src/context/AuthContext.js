@@ -1,5 +1,8 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import api from "../axios/api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const KEY = "AUTH_KEY";
 
 export const AuthContext =createContext({})
 
@@ -20,6 +23,7 @@ export function AuthContextProvider({children}){
             {email: email, senha: senha}
           )
           setEstudante(response.data.estudante)
+          await AsyncStorage.setItem(KEY, JSON.stringify(response.data.estudante))
         //   console.log(response.data.estudante)
           console.log(estudante)
           return response.data.email
@@ -47,6 +51,19 @@ export function AuthContextProvider({children}){
         }
       }
 
+      //checar se ta autenticado
+      useEffect(()=>{
+        async function checkAuth(){
+          const storedData = await AsyncStorage.getItem(KEY);
+          if(storedData){
+            setEstudante(JSON.parse(storedData));
+          }
+        }
+        checkAuth();
+      },[]);
+
+      //buscar dados dos estudante que voltam no onibus
+      
     return (
         <AuthContext.Provider
           value={{
