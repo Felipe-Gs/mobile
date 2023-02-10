@@ -64,8 +64,23 @@ export function Listar() {
         value={searchQuery}
       />
       <Text style={{fontSize:20}}>Todos Estudantes:</Text>
-      <ScrollView style={{width:'100%', height:'100%'}}>
+      {dados ? (
+        <ScrollView style={{width:'100%', height:'100%'}}>
+          {
+            dados.filter(dado => dado.nome.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map((item, index) => {
+              return (
+                <View style={{width:'100%', height:100}} key={index}>
+                  <CardInfo nome={item.nome} email={item.email} id={item.id} />
+                </View>
+              );
+            })
+          }
+        </ScrollView>
+      ):(<View><ActivityIndicator/></View> ) }
+      {/* <ScrollView style={{width:'100%', height:'100%'}}>
         {dados? 
+        (
           dados.filter(dado => dado.nome.toLowerCase().includes(searchQuery.toLowerCase()))
           .map((item, index) => {
             return (
@@ -74,8 +89,9 @@ export function Listar() {
               </View>
             );
           })
-        : <ActivityIndicator/>}
-      </ScrollView>
+        )
+        : (<ActivityIndicator/>)}
+      </ScrollView> */}
       <TouchableOpacity style={style.arrowGo} onPress={()=>navigate('EstudanteVolta')}>
         <Entypo name="chevron-right" size={30} color="black" />
       </TouchableOpacity>

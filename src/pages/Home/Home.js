@@ -43,7 +43,7 @@ export function Home() {
         <Text style={style.textOnibus}>Cadastro</Text>
         <View style={style.ViewInputs}>
           <TextInput style={style.Inputs} type='outlined' label='Email' value={email}  onChangeText={text => setEmail(text)}/>
-          <TextInput style={style.Inputs} type='outlined' label='Senha' value={senha}  onChangeText={text => setSenha(text)}/>
+          <TextInput style={style.Inputs} type='outlined' secureTextEntry={true} label='Senha' value={senha}  onChangeText={text => setSenha(text)}/>
           <TextInput style={style.Inputs} type='outlined' label='Nome' value={nome}  onChangeText={text => setNome(text)}/>
           {error && <Text>{error}</Text>}
         </View>

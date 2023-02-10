@@ -42,7 +42,7 @@ import CheckBoxToggle from '../../components/CheckBoxToggle';
             }
         };
         listarEstudantesVoltam();
-    },[])
+    },[dados])
     
     const filterData = (query) => {
       if (!dadosIniciais) return;
