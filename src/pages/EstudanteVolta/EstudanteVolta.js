@@ -12,14 +12,15 @@ import { useNavigation } from "@react-navigation/native";
 import api from "../../axios/api";
 import { useAuth } from "../../hooks/useAuth";
 
-import { Searchbar } from "react-native-paper";
+import { Button, Searchbar } from "react-native-paper";
 import { ActivityIndicator } from "react-native-paper";
+
+import { Checkbox } from "react-native-paper";
 
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 import CardInfo from "../../components/CardInfo";
-import CheckBoxToggle from "../../components/CheckBoxToggle";
 
 export default function EstudanteVolta() {
   const { estudante } = useAuth();
@@ -29,6 +30,25 @@ export default function EstudanteVolta() {
   const [dados, setDados] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [dadosIniciais, setDadosIniciais] = useState();
+
+  const [checked, setChecked] = useState(false);
+  const [volta, setVolta] = useState(false);
+
+  const atualizarVolta = async () => {
+    try {
+      await api.put(`/volta/${estudante.id}`, {
+        volta,
+      });
+      alert("opção atualizada");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const toggleVolta = async () => {
+    setChecked(!checked);
+    setVolta(!checked);
+  };
 
   useEffect(() => {
     const listarEstudantesVoltam = async () => {
@@ -42,7 +62,7 @@ export default function EstudanteVolta() {
       }
     };
     listarEstudantesVoltam();
-  }, []);
+  }, [dados]);
 
   const filterData = (query) => {
     if (!dadosIniciais) return;
@@ -71,7 +91,15 @@ export default function EstudanteVolta() {
         value={searchQuery}
       />
 
-      <CheckBoxToggle />
+      <Checkbox
+        status={checked ? "checked" : "unchecked"}
+        onPress={() => {
+          toggleVolta();
+        }}
+      />
+      <Button mode="outlined" onPress={atualizarVolta}>
+        Enviar
+      </Button>
 
       <Text style={{ marginTop: 20, fontSize: 22 }}>
         Estudantes que voltam hoje:
@@ -91,19 +119,6 @@ export default function EstudanteVolta() {
       ) : (
         <ActivityIndicator />
       )}
-      {/* {dados? (
-           <FlatList
-                showsVerticalScrollIndicator={false}
-                style={{width:'100%', height:'100%'}}
-                data={dados}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={{width:'100%', height:100}}>
-                        <CardInfo nome={item.nome} email={item.email}  />
-                    </View>
-                )}
-            />
-       ): <ActivityIndicator/>} */}
       <TouchableOpacity
         style={style.arrowGo}
         onPress={() => navigate("Listar")}
